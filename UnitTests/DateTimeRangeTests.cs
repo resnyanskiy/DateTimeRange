@@ -6,18 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ClassLibrary
 {
-  /*
-  1.	Тип должен поддерживать операции объединения и сравнения как отдельных экземпляров, так и множеств.
-   a.	Операции над множествами должны быть реализованы в рамках отдельного класса.
-   b. Методы класса не должны использовать методы класса System.Linq.Enumerable, принимающие предикат.
-  2.	Тип должен поддерживать применение его экземпляров в коллекциях, в т.ч. в качестве ключей.
-  3.	Тип должен поддерживать создание набора экземпляров на основании «пульса». Сигнатура фабричного метода IEnumerable<DateTimeRange> Create(IDictionary<DateTime, bool> pulse).
-   a. Метод не должен использовать класс System.Linq.Enumerable.
-  4.	Тип должен поддерживать создание набора экземпляров на основании «порогового значения». Сигнатура фабричного метода IEnumerable<DateTimeRange> Create<T>(IDictionary<DateTime, T> values, T min).
-   a. Метод не должен использовать класс System.Linq.Enumerable.
-  5.  Набор тестов может быть расширен.
-  */
-
   [TestClass]
   public class DateTimeRangeTests
   {
@@ -76,71 +64,6 @@ namespace ClassLibrary
       Assert.AreEqual(new DateTimeRange(begin.AddMinutes(1), begin.AddMinutes(2)), ranges[0]);
       Assert.AreEqual(new DateTimeRange(begin.AddMinutes(3), begin.AddMinutes(4)), ranges[1]);
       Assert.AreEqual(new DateTimeRange(begin.AddMinutes(5), begin.AddMinutes(7)), ranges[2]);
-    }
-
-    [TestMethod]
-    public void CreateFromValuesTest()
-    {
-      /*
-       * input:    0 0 1 2 0 1 0 2
-       * output:       |---| |-| |--...
-       *
-       */
-      // arrange
-      var begin = DateTime.Today;
-      var values = new Dictionary<DateTime, int>
-      {
-        [begin.AddMinutes(1)] = 0,
-        [begin.AddMinutes(2)] = 0,
-        [begin.AddMinutes(3)] = 1,
-        [begin.AddMinutes(4)] = 2,
-        [begin.AddMinutes(5)] = 0,
-        [begin.AddMinutes(6)] = 1,
-        [begin.AddMinutes(7)] = 0,
-        [begin.AddMinutes(8)] = 2
-
-      };
-
-      // act
-      var ranges = DateTimeRange.Create(values, 1).ToArray();
-
-      // assert
-      Assert.AreEqual(3, ranges.Count());
-      Assert.AreEqual(new DateTimeRange(begin.AddMinutes(3), begin.AddMinutes(5)), ranges[0]);
-      Assert.AreEqual(new DateTimeRange(begin.AddMinutes(6), begin.AddMinutes(7)), ranges[1]);
-      Assert.AreEqual(new DateTimeRange(begin.AddMinutes(8), DateTime.MaxValue), ranges[2]);
-    }
-
-    [TestMethod]
-    public void MergeTest()
-    {
-      /*
-       |---|
-       |-----|
-                |---|
-                       |---|
-                           |---|
-
-       |-----|  |---|  |-------|
-       */
-
-      // arrange
-      var now = DateTime.Now;
-      var range1 = new DateTimeRange(now, TimeSpan.FromHours(1));                              // 00:00 - 01:00
-      var range1plus = range1 + TimeSpan.FromMinutes(30);                                      // 00:00 - 01:30
-      var range2 = new DateTimeRange(range1plus.End.AddMinutes(30), TimeSpan.FromMinutes(30)); // 02:00 - 02:30
-      var range3 = new DateTimeRange(range2.End.AddMinutes(30), TimeSpan.FromMinutes(30));     // 03:00 - 03:30
-      var range3split = new DateTimeRange(range3.End, TimeSpan.FromMinutes(30));               // 03:30 - 04:00
-      var ranges = new[] { range1, range2, range3, range1plus, range3split };
-
-      // act
-      var merge = ranges.Merge().ToArray();
-
-      // assert
-      Assert.AreEqual(3, merge.Length);
-      Assert.AreEqual(new DateTimeRange(range1plus.Begin, range1plus.End), merge[0]); // 00:00 - 01:30
-      Assert.AreEqual(new DateTimeRange(range2.Begin, range2.End), merge[1]);         // 02:00 - 02:30
-      Assert.AreEqual(new DateTimeRange(range3.Begin, range3split.End), merge[2]);    // 03:00 - 04:00
     }
 
     [TestMethod]
@@ -204,18 +127,6 @@ namespace ClassLibrary
     }
 
     [TestMethod]
-    public void IntersectNullOrEmpty()
-    {
-      // arrange
-      var now = DateTime.Now;
-      var range = new DateTimeRange(now, TimeSpan.FromHours(1));
-
-      // assert
-      Assert.AreEqual(range, range.Intersect(null).Single()); // пересечение с не заданным значением - пересечение со всем
-      Assert.IsFalse(range.Intersect(Enumerable.Empty<DateTimeRange>()).Any()); // пересечение с пустым множеством - пустое множество
-    }
-
-    [TestMethod]
     public void ExceptTest()
     {
       // arrange
@@ -252,35 +163,6 @@ namespace ClassLibrary
       {
         Assert.AreEqual(range, extract.First());
       }
-    }
-
-    [TestMethod]
-    public void ExceptNullOrEmpty()
-    {
-      // arrange
-      var now = DateTime.Now;
-      var range = new DateTimeRange(now, TimeSpan.FromHours(1));
-
-      // assert
-      Assert.AreEqual(range, range.Except(null).Single());
-      Assert.AreEqual(range, range.Except(Enumerable.Empty<DateTimeRange>()).Single());
-    }
-
-    [TestMethod]
-    public void DateTimeRangeFormat()
-    {
-      // arrange
-      var format = "dd-MM-yyyy HH:mm";
-      var begin = DateTime.Now;
-      var end = begin.AddHours(1);
-      var range = new DateTimeRange(begin, end);
-
-      // act
-      var actual = ((IFormattable)range).ToString(format, CultureInfo.InvariantCulture);
-      var expected = begin.ToString(format, CultureInfo.InvariantCulture) + " - " + end.ToString(format, CultureInfo.InvariantCulture);
-
-      // assert
-      Assert.AreEqual(expected, actual);
     }
   }
 }
