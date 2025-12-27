@@ -18,17 +18,31 @@ public record struct DateTimeRange
 
 	public DateTimeRange(DateTime begin, TimeSpan duration)
 	{
-		//TODO Check ArgumentOutOfRangeException for crossing DateTime.Min/Max
-
 		if (duration < TimeSpan.Zero)
 		{
-			Begin = begin + duration;
 			End = begin;
+
+			try
+			{
+				Begin = begin + duration;
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				Begin = DateTime.MinValue;
+			}
 		}
 		else
 		{
 			Begin = begin;
-			End = begin + duration;
+			
+			try
+			{
+				End = begin + duration;
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				End = DateTime.MaxValue;
+			}
 		}
 	}
 
