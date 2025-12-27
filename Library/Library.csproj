@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!--  
+	<ItemGroup>
+		<Compile Remove="DateTimeRange.*.cs"/>
+	</ItemGroup>
+	-->
+</Project>
