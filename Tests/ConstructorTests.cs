@@ -2,8 +2,8 @@ namespace DateTimeRangeLibrary;
 
 public class ConstructorTests
 {
-	[Theory, ClassData(typeof(ValidValuesData))]
-	public void Constructor_WithValidValues(DateTime? begin, DateTime? end)
+	[Theory, ClassData(typeof(ConstructorValues))]
+	public void Constructor_AcceptsAnyValues(DateTime? begin, DateTime? end)
 	{
 		// Act
 		var range = new DateTimeRange(begin, end);
@@ -22,9 +22,9 @@ public class ConstructorTests
 		Assert.Equal(expectedEnd, range.End);
 	}
 	
-	private class ValidValuesData : TheoryData<DateTime?, DateTime?>
+	private class ConstructorValues : TheoryData<DateTime?, DateTime?>
 	{
-		public ValidValuesData()
+		public ConstructorValues()
 		{
 			Add(null, null);
 			Add(null, new DateTime(2020, 1, 1));
@@ -33,34 +33,31 @@ public class ConstructorTests
 			Add(new DateTime(2020, 1, 1), new DateTime(2020, 1, 2));
 		}
 	}
-	
-	[Theory, ClassData(typeof(EdgeCasesData))]
-	public void Constructor_WithEdgeCases(DateTime begin, TimeSpan duration, DateTime expectedBegin, DateTime expectedEnd)
-	{
-		// Act
-		var range = new DateTimeRange(begin, duration);
 
-		// Assert
-		Assert.Equal(expectedBegin, range.Begin);
-		Assert.Equal(expectedEnd, range.End);
+	[Theory, ClassData(typeof(EdgeCasesData))]
+	public void Constructor_WithEdgeCases(DateTime begin, TimeSpan duration)
+	{
+		// Act & Assert
+		Assert.Throws<ArgumentOutOfRangeException>(() => new DateTimeRange(begin, duration));
 	}
 
-	private class EdgeCasesData : TheoryData<DateTime, TimeSpan, DateTime, DateTime>
+	private class EdgeCasesData : TheoryData<DateTime, TimeSpan>
 	{
 		public EdgeCasesData()
 		{
-			// защита от перехода через DateTime.MaxValue
-			Set(
-				begin: new DateTime(1), duration: TimeSpan.MaxValue,
-				expectedBegin: new DateTime(1), expectedEnd: DateTime.MaxValue);
-			
-			// защита от перехода через DateTime.MinValue
-			Set(
-				begin: new DateTime(1), duration: new TimeSpan(-2),
-				expectedBegin: DateTime.MinValue, expectedEnd: new DateTime(1));
+			Add(new DateTime(1), TimeSpan.MaxValue);
+			Add(new DateTime(1), new TimeSpan(-2));
 		}
+	}
+	
+	[Fact]
+	public void DefaultConstructor_CreatesZeroRange()
+	{
+		// Act
+		var range = new DateTimeRange();
 		
-		private void Set(DateTime begin, TimeSpan duration, DateTime expectedBegin, DateTime expectedEnd)
-			=> Add(begin, duration, expectedBegin, expectedEnd);
+		// Assert
+		Assert.Equal(DateTime.MinValue, range.Begin);
+		Assert.Equal(DateTime.MinValue, range.End);
 	}
 }

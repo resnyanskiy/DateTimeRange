@@ -16,34 +16,10 @@ public record struct DateTimeRange
 		}
 	}
 
-	public DateTimeRange(DateTime begin, TimeSpan duration)
+	// could throw ArgumentOutOfRangeException if `begin + duration` is out of `DateTime.MinValue..DateTime.MaxValue`
+	public DateTimeRange(DateTime begin, TimeSpan duration) : this(begin, begin + duration)
 	{
-		if (duration < TimeSpan.Zero)
-		{
-			End = begin;
-
-			try
-			{
-				Begin = begin + duration;
-			}
-			catch (ArgumentOutOfRangeException)
-			{
-				Begin = DateTime.MinValue;
-			}
-		}
-		else
-		{
-			Begin = begin;
-			
-			try
-			{
-				End = begin + duration;
-			}
-			catch (ArgumentOutOfRangeException)
-			{
-				End = DateTime.MaxValue;
-			}
-		}
+		//
 	}
 
 	public DateTime Begin { get; }
