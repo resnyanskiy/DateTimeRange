@@ -26,7 +26,6 @@ public class ConstructorTests
 	{
 		public ConstructorValues()
 		{
-			Add(null, null);
 			Add(null, new DateTime(2020, 1, 1));
 			Add(new DateTime(2020, 1, 1), null);
 			Add(new DateTime(2020, 1, 2), new DateTime(2020, 1, 1));
@@ -35,7 +34,7 @@ public class ConstructorTests
 	}
 
 	[Theory, ClassData(typeof(EdgeCasesData))]
-	public void Constructor_WithEdgeCases(DateTime begin, TimeSpan duration)
+	public void Constructor_WithEdgeCases_ThrowsException(DateTime begin, TimeSpan duration)
 	{
 		// Act & Assert
 		Assert.Throws<ArgumentOutOfRangeException>(() => new DateTimeRange(begin, duration));
@@ -51,13 +50,22 @@ public class ConstructorTests
 	}
 	
 	[Fact]
-	public void DefaultConstructor_CreatesZeroRange()
+	public void DefaultConstructor_CreatesMinValue()
 	{
 		// Act
 		var range = new DateTimeRange();
 		
 		// Assert
-		Assert.Equal(DateTime.MinValue, range.Begin);
-		Assert.Equal(DateTime.MinValue, range.End);
+		Assert.Equal(DateTimeRange.MinValue, range);
 	}
+	
+	[Fact]
+	public void Constructor_WithNulls_CreatesMaxValue()
+	{
+		// Act
+		var range = new DateTimeRange(null, null);
+		
+		// Assert
+		Assert.Equal(DateTimeRange.MaxValue, range);
+	}	
 }

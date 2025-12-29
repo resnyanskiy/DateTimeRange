@@ -22,16 +22,20 @@ public record struct DateTimeRange
 					{
 						end = enumerator.Current.Key;
 						if (end < begin)
-							throw new ArgumentException("Dictionary must be sorted by key.", nameof(values));
+							throw new ArgumentException("Enumeration must be sorted by key.", nameof(values));
 					}
 				}
 				// продлевать интервал, если значение больше порога
 				while (available && enumerator.Current.Value.CompareTo(threshold) > 0);
 
-				yield return new DateTimeRange(begin, end);
+				yield return new DateTimeRange { Begin = begin, End = end };
 			}
 		}
 	}
+	
+	public static readonly DateTimeRange MinValue = new(DateTime.MinValue, DateTime.MinValue);
+	
+	public static readonly DateTimeRange MaxValue = new(DateTime.MinValue, DateTime.MaxValue);
 	
 	public DateTimeRange(DateTime? begin, DateTime? end)
 	{
@@ -53,7 +57,7 @@ public record struct DateTimeRange
 		//
 	}
 
-	public DateTime Begin { get; }
+	public DateTime Begin { get; internal init; }
 
-	public DateTime End { get; }
+	public DateTime End { get; internal init; }
 }

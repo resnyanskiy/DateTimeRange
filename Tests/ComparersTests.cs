@@ -3,12 +3,12 @@ using AutoFixture.Xunit2;
 
 namespace DateTimeRangeLibrary;
 
-public class ComparerTests
+public class ComparersTests
 {
 	private readonly Fixture _fixture = new();
-	private readonly Comparer _comparer = new();
+	private readonly DefaultComparer _comparer = new();
 
-	public ComparerTests()
+	public ComparersTests()
 	{
 		// Настраиваем создание DateTime в разумном диапазоне
 		_fixture.Customize<DateTime>(c => c.FromFactory<Random>(r => new DateTime(2020, 1, 1).AddDays(r.Next(0, 365))));
@@ -25,7 +25,7 @@ public class ComparerTests
 	 * 0123456789012
 	 */
 	[Fact]
-	public void GoldenSample()
+	public void DefaultComparer_GoldenSample()
 	{
 		// Arrange
 		var begin = DateTime.Today;
@@ -43,6 +43,41 @@ public class ComparerTests
 		var r = new Random();
 		var random = expected.OrderBy(_ => r.Next(expected.Length));
 		var actual = new SortedSet<DateTimeRange>(random, _comparer);
+
+		// Assert
+		Assert.Equal(expected.Length, actual.Count);
+		Assert.Equal(expected, actual);
+	}
+
+	/*
+	 * 0123456789012
+	 * /----/
+	 * /------/
+	 *   /------/
+	 *     /----/
+	 *  /----------/
+	 *        /----/
+	 * 0123456789012
+	 */
+	[Fact]
+	public void AlternateComparer_GoldenSample()	
+	{
+		// Arrange
+		var begin = DateTime.Today;
+		DateTimeRange[] expected =
+		[
+			new(begin, TimeSpan.FromMinutes(5)),
+			new(begin, TimeSpan.FromMinutes(7)),
+			new(begin.AddMinutes(2), TimeSpan.FromMinutes(7)),
+			new(begin.AddMinutes(4), TimeSpan.FromMinutes(5)),
+			new(begin.AddMinutes(1), TimeSpan.FromMinutes(11)),
+			new(begin.AddMinutes(7), TimeSpan.FromMinutes(5)),
+		];
+		
+		// Act
+		var r = new Random();
+		var random = expected.OrderBy(_ => r.Next(expected.Length));
+		var actual = new SortedSet<DateTimeRange>(random, new AlternateComparer());
 
 		// Assert
 		Assert.Equal(expected.Length, actual.Count);

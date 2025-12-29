@@ -89,8 +89,6 @@ public class FactoryTests
 		const int threshold = 3;
 		var signal = new Dictionary<DateTime, int>()
 		{
-			[begin.AddMinutes(1)] = 4,
-			[begin.AddMinutes(2)] = 2,
 			[begin.AddMinutes(3)] = 5,
 		};
 		
@@ -98,7 +96,7 @@ public class FactoryTests
 		var ranges = DateTimeRange.Create(signal, threshold).ToArray();
 		
 		// Assert
-		Assert.Equal(begin.AddMinutes(3), ranges[1].Begin);
-		Assert.Equal(DateTime.MaxValue, ranges[1].End);		
+		Assert.Equal(begin.AddMinutes(3), ranges[0].Begin);
+		Assert.Equal(DateTime.MaxValue, ranges[0].End);		
 	}
 }

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Example</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Library\Library.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Using Include="DateTimeRangeLibrary" />
+		<Using Include="Example" />
+	</ItemGroup>
+	
+</Project>
