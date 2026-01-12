@@ -14,5 +14,8 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
+    - name: Restore dependencies
+      run: dotnet restore Tests -p:Configuration=Release 
+
     - name: Run tests
-      run: dotnet test ./Tests --verbosity normal
+      run: dotnet test Tests -c Release --no-restore

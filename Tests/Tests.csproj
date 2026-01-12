@@ -12,8 +12,17 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Library\Library.csproj" />
-  </ItemGroup>
-
+	<Choose>
+		<When Condition="'$(Configuration)' == 'Release'">
+			<ItemGroup>
+				<PackageReference Include="DateTimeRange" Version="0.0.0-*" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<ProjectReference Include="..\Library\Library.csproj" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+	
 </Project>

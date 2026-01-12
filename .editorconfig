@@ -6,6 +6,11 @@ max_line_length = 125
 [*.cs]
 insert_final_newline = true
 
+# XML
+[*.{csproj,config}]
+indent_size = 2
+
+# YAML
 [*.yml]
 indent_style = space
 indent_size = 2

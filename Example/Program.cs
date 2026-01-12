@@ -15,7 +15,7 @@ var saver = Task.Run(() =>
 });
 
 // Producer: Generate signals
-const int NUMBER_OF_SENSORS = 3;
+const int NUMBER_OF_SENSORS = 4;
 var sensors = new List<Task>(NUMBER_OF_SENSORS);
 var consoleLock = new Lock();
 using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
@@ -25,6 +25,7 @@ using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
 		sensors.Add(GenerateSignals(cts.Token));
 	}
 
+	// press 'Enter' or wait 10 seconds to stop
 	var cancelTask = Task.Run(() => { Console.ReadLine(); cts.Cancel(); });
 	var timeoutTask = Task.Delay(Timeout.Infinite, cts.Token);
 	await Task.WhenAny(cancelTask, timeoutTask);

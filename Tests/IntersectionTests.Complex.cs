@@ -87,7 +87,6 @@ public partial class IntersectionTests
 	  /++//+/
 	*/
 	[Fact]	
-	// [Fact(Skip = "Infinite loop")]	
 	public void Overlapped_Ranges()
 	{
 		var begin = DateTime.Today;

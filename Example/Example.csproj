@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Library\Library.csproj" />
+		<PackageReference Include="DateTimeRange" Version="0.0.0-*" />
 	</ItemGroup>
 	
 	<ItemGroup>
