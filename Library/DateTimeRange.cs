@@ -9,7 +9,7 @@ public record struct DateTimeRange
 
 		while (enumerator.MoveNext())
 		{
-			// начать интервал, если значение больше порога
+			// start interval if value is greater than threshold
 			if (enumerator.Current.Value.CompareTo(threshold) > 0)
 			{
 				var begin = enumerator.Current.Key;
@@ -25,7 +25,7 @@ public record struct DateTimeRange
 							throw new ArgumentException("Enumeration must be sorted by key.", nameof(values));
 					}
 				}
-				// продлевать интервал, если значение больше порога
+				// extend interval if value is greater than threshold
 				while (available && enumerator.Current.Value.CompareTo(threshold) > 0);
 
 				yield return new DateTimeRange { Begin = begin, End = end };

@@ -8,7 +8,7 @@ public static class Extensions
 
 		var arr = ranges.ToArray();
 
-		// if there is no ranges or only one range, return without calculations (let GC collect `arr`) 
+		// if there are no ranges or only one range, return without calculations (let GC collect `arr`) 
 		if (arr.Length < 2)
 			return ranges;
 
@@ -29,7 +29,7 @@ public static class Extensions
 				var minEnd = baseRange.End;
 				var hasIntersection = false;
 				
-				// at this step the `rangesArray` contains at least 2 elements
+				// at this point the `rangesArray` contains at least 2 elements
 				for (var currentIndex = baseIndex + 1; currentIndex < rangesArray.Length; currentIndex++)
 				{
 					var currentRange = rangesArray[currentIndex];

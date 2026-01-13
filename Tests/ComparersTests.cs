@@ -10,7 +10,6 @@ public class ComparersTests
 
 	public ComparersTests()
 	{
-		// Настраиваем создание DateTime в разумном диапазоне
 		_fixture.Customize<DateTime>(c => c.FromFactory<Random>(r => new DateTime(2020, 1, 1).AddDays(r.Next(0, 365))));
 	}
 
@@ -95,13 +94,13 @@ public class ComparersTests
 			sorted.Add(range);
 		}
 
-		// Assert - проверяем сортировку по Begin
+		// Assert - check sorting by Begin
 		var elements = sorted.ToList();
 		for (var i = 0; i < elements.Count - 1; i++)
 		{
 			Assert.True(elements[i].Begin <= elements[i + 1].Begin);
 
-			// Если начала равны, проверяем сортировку по End
+			// check sorting by End
 			if (elements[i].Begin == elements[i + 1].Begin)
 			{
 				Assert.True(elements[i].End <= elements[i + 1].End);
@@ -127,7 +126,7 @@ public class ComparersTests
 		var comp23 = _comparer.Compare(range2, range3);
 		var comp13 = _comparer.Compare(range1, range3);
 
-		// Assert: если range1 < range2 и range2 < range3, то range1 < range3
+		// Assert: if range1 < range2 and range2 < range3, then range1 < range3
 		if (comp12 < 0 && comp23 < 0)
 		{
 			Assert.True(comp13 < 0);
@@ -141,7 +140,7 @@ public class ComparersTests
 		var comp12 = _comparer.Compare(range1, range2);
 		var comp21 = _comparer.Compare(range2, range1);
 
-		// Assert: если range1 < range2, то range2 > range1
+		// Assert: if range1 < range2, then range2 > range1
 		if (comp12 < 0)
 		{
 			Assert.True(comp21 > 0);

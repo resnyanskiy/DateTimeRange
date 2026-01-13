@@ -67,14 +67,14 @@ gantt
 		I :crit, active, 20:41.469, 20:41.706
 ```
 
-Current version supports the following methods (feel free to [request/propose/discuss](/discussions) any other useful extensions):
+Current version supports the following methods (feel free to [request/propose/discuss](https://github.com/resnyanskiy/DateTimeRange/discussions) any other useful extensions):
 ```csharp
 // Merges overlapping ranges in a collection of non-overlapping ranges.
 // The example result is "Int" (meaning "integration") row on the diagram above.
 IEnumerable<DateTimeRange> Merge(this IEnumerable<DateTimeRange> ranges)
 ```
 ```csharp
-// Slices a collection of ranges into distinct adjacent ranges based on unique boundary points.
+// Slices ranges into distinct adjacent ranges based on unique boundary points.
 // The example result is "Dif" (meaning "differential") row on the diagram above.
 IEnumerable<DateTimeRange> Slice(this IEnumerable<DateTimeRange> ranges)
 ```
