@@ -115,12 +115,12 @@ var maxHotPeriods = hotPeriodsQuery.Intersections();
 NuGet Package
 -
 `DateTimeRange` is available on [GitHub Packages](https://github.com/users/resnyanskiy/packages/nuget/). To consume:
-1. Add source `github-resnyanskiy` or use predefined [NuGet.config](/nuget.config).
+1. Add source `github-resnyanskiy`.
 ```
 dotnet nuget add source "https://nuget.pkg.github.com/resnyanskiy/index.json" --name "github-resnyanskiy"
 ```
 2. [Get](https://github.com/settings/tokens) GitHub token with `read:packages` scope for your GitHub account.
-3. Set credentials for source `github-resnyanskiy`.
+3. Set credentials for the source `github-resnyanskiy`.
 ```
 dotnet nuget update source github-resnyanskiy --username resnyanskiy --password YOUR_TOKEN --store-password-in-clear-text
 ```
