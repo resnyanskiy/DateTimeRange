@@ -1,21 +1,20 @@
 name: Run Tests
 
-on: [ push, pull_request ]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   test:
     runs-on: linux
-    
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore Tests -p:Configuration=Release 
+      - name: Restore dependencies
+        run: dotnet restore Tests -p:Configuration=Release
 
-    - name: Run tests
-      run: dotnet test Tests -c Release --no-restore
+      - name: Run tests
+        run: dotnet test Tests -c Release --no-restore
