@@ -106,7 +106,7 @@ Dictionary<DateTime, double> temperatureInside;
 IEnumerable<DateTimeRange> hotOutside = DateTimeRange.Create(temperatureOutside, 20.0);
 IEnumerable<DateTimeRange> hotInside = DateTimeRange.Create(temperatureInside, 20.0);
 
-var hotPeriodsQuery = hotOutside.Union(hotInside).Where(r => r.End < DateTime.MaxValue);
+var hotPeriodsQuery = hotOutside.Concat(hotInside).Where(r => r.End < DateTime.MaxValue);
 
 // Find periods when there was hot inside and outside at the same time
 var maxHotPeriods = hotPeriodsQuery.Intersections();

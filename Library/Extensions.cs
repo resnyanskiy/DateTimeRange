@@ -1,7 +1,15 @@
 ﻿namespace DateTimeRangeLibrary;
 
+/// <summary>
+/// Provides extension methods for enumeration of <see cref="DateTimeRange"/>.
+/// </summary>
 public static class Extensions
 {
+	/// <summary>
+	/// Finds all intersections between ranges.
+	/// </summary>
+	/// <param name="ranges">Enumeration of ranges to find intersections for.</param>
+	/// <returns>Enumeration of ranges representing the intersections.</returns>
 	public static IEnumerable<DateTimeRange> Intersections(this IEnumerable<DateTimeRange> ranges)
 	{
 		ArgumentNullException.ThrowIfNull(ranges);
@@ -69,6 +77,11 @@ public static class Extensions
 		}
 	}
 
+	/// <summary>
+	/// Merges overlapping ranges.
+	/// </summary>
+	/// <param name="ranges">Enumeration of ranges to merge.</param>
+	/// <returns>Enumeration of merged ranges.</returns>	
 	public static IEnumerable<DateTimeRange> Merge(this IEnumerable<DateTimeRange> ranges)
 	{
 		ArgumentNullException.ThrowIfNull(ranges);
@@ -92,6 +105,11 @@ public static class Extensions
 		}
 	}
 
+	/// <summary>
+	/// Slices provided ranges into non-overlapping segments based on their boundary points.
+	/// </summary>
+	/// <param name="ranges">Enumeration of ranges.</param>
+	/// <returns>Enumeration of sliced segments.</returns>	
 	public static IEnumerable<DateTimeRange> Slice(this IEnumerable<DateTimeRange> ranges)
 	{
 		ArgumentNullException.ThrowIfNull(ranges);
