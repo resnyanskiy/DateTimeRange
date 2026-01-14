@@ -86,7 +86,7 @@ public static class Extensions
 	{
 		ArgumentNullException.ThrowIfNull(ranges);
 		
-		using var enumerator = ranges.Distinct().OrderBy(x => x.Begin).GetEnumerator();
+		using var enumerator = ranges/*.Distinct()*/.OrderBy(x => x.Begin).GetEnumerator();
 		var available = enumerator.MoveNext();
 		while (available)
 		{

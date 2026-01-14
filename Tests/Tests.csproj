@@ -15,7 +15,7 @@
 	<Choose>
 		<When Condition="'$(Configuration)' == 'Release'">
 			<ItemGroup>
-				<PackageReference Include="DateTimeRange" Version="0.0.0-*" />
+				<PackageReference Include="DateTimeRange" Version="0.1.0" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
