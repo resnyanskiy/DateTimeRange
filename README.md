@@ -142,6 +142,7 @@ Big O
 |------:|----------------------|---------------|------------|-------------------|
 |  Time | O(n)                 | O(n log n)⁽¹⁾ | O(n log n) | O(n log n)..O(n²) |
 | Space | O(1)                 | O(n)          | O(n)       | O(n)              |
+
 ⁽¹⁾Time complexity is `O(n)` if the input is already sorted.
 
 Docs
