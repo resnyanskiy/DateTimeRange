@@ -93,9 +93,17 @@ IEnumerable<DateTimeRange> Intersections(this IEnumerable<DateTimeRange> ranges)
 - **Code quality**: The library includes comprehensive unit tests.
 </details>
 
-Example
+Big O
 -
-Repository contains [Example](./Example/Program.cs) and [Tests](./Tests/IntersectionTests.Complex.cs), which show how to use the library.
+|       | DateTimeRange.Create | Merge         | Slice      | Intersections     |
+|------:|----------------------|---------------|------------|-------------------|
+|  Time | O(n)                 | O(n log n)⁽¹⁾ | O(n log n) | O(n log n)..O(n²) |
+| Space | O(1)                 | O(n)          | O(n)       | O(n)              |
+⁽¹⁾Time complexity is `O(n)` if the input is already sorted.
+
+Docs
+-
+The library's current API is very simple, so no guidelines is needed. Repository contains [Example](./Example/Program.cs) and [Tests](./Tests/IntersectionTests.Complex.cs), which show how to use the library.
 ```csharp
 using DateTimeRangeLibrary;
 
@@ -115,16 +123,16 @@ var maxHotPeriods = hotPeriodsQuery.Intersections();
 NuGet Package
 -
 `DateTimeRange` is available on [GitHub Packages](https://github.com/users/resnyanskiy/packages/nuget/). To consume:
-1. Add source `github-resnyanskiy`.
+1. [Get](https://github.com/settings/tokens) token with `read:packages` scope for your GitHub account.
+2. Add source `github-resnyanskiy`:
 ```
 dotnet nuget add source "https://nuget.pkg.github.com/resnyanskiy/index.json" --name "github-resnyanskiy"
 ```
-2. [Get](https://github.com/settings/tokens) GitHub token with `read:packages` scope for your GitHub account.
-3. Set credentials for the source `github-resnyanskiy`.
+3. Set credentials for the source `github-resnyanskiy`:
 ```
 dotnet nuget update source github-resnyanskiy --username resnyanskiy --password YOUR_TOKEN --store-password-in-clear-text
 ```
-4. Add package `DateTimeRange` to your project.
+4. Add package `DateTimeRange` to your project:
 ```
 dotnet package add DateTimeRange --source https://nuget.pkg.github.com/resnyanskiy/index.json
 ```
