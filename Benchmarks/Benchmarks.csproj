@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+		<RootNamespace>Benchmarks</RootNamespace>
+  </PropertyGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Using Include="BenchmarkDotNet.Attributes" />
+		<Using Include="DateTimeRangeLibrary" />
+		<Using Include="Benchmarks" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Library\Library.csproj" />
+	</ItemGroup>
+	
+</Project>

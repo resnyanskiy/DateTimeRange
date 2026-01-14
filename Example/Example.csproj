@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Example</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DateTimeRange" Version="0.1.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Using Include="DateTimeRangeLibrary" />
+		<Using Include="Example" />
+	</ItemGroup>
+	
+</Project>

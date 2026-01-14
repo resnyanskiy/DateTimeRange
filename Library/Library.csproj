@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RepxositoryUrl>https://github.com/resnyanskiy/DateTimeRange</RepxositoryUrl>
+		<PackageId>DateTimeRange</PackageId>
+		<AssemblyName>DateTimeRange</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="MinVer" Version="7.0.0" PrivateAssets="All" />
+	</ItemGroup>
+
+</Project>
