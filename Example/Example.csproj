@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DateTimeRange" Version="0.2.0" />
+		<PackageReference Include="DateTimeRanges" Version="0.2.0" />
 	</ItemGroup>
 	
 	<ItemGroup>

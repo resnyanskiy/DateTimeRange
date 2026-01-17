@@ -178,7 +178,7 @@ dotnet nuget add source "https://nuget.pkg.github.com/resnyanskiy/index.json" --
 ```
 dotnet nuget update source github-resnyanskiy --username resnyanskiy --password YOUR_TOKEN --store-password-in-clear-text
 ```
-4. Add package `DateTimeRange` to your project:
+4. Add package `DateTimeRanges` to your project:
 ```
-dotnet package add DateTimeRange --source https://nuget.pkg.github.com/resnyanskiy/index.json
+dotnet package add DateTimeRanges --source https://nuget.pkg.github.com/resnyanskiy/index.json
 ```

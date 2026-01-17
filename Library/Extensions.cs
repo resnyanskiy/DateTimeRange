@@ -12,10 +12,10 @@ public static class Extensions
 		/// Finds all intersections between ranges.
 		/// </summary>
 		/// <remarks>
-		/// Returns <paramref name="ranges"/> if it has less than 2 elements.
+		/// Returns provided enumeration if it has less than 2 elements.
 		/// </remarks>
 		/// <returns>Enumeration of ranges representing the intersections.</returns>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="ranges"/> is null.</exception>
+		/// <exception cref="ArgumentNullException">Thrown if enumeration is null.</exception>
 		public IEnumerable<DateTimeRange> Intersections()
 		{
 			ArgumentNullException.ThrowIfNull(ranges);
@@ -94,10 +94,10 @@ public static class Extensions
 		/// Finds all intersections between ranges.
 		/// </summary>
 		/// <remarks>
-		/// Returns empty enumeration if <paramref name="rangesArray"/> has less than 2 elements.
+		/// Returns empty enumeration if provided array has less than 2 elements.
 		/// </remarks>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="rangesArray"/> is null.</exception>
-		/// <exception cref="ArgumentException">Thrown in <paramref name="rangesArray"/> not sorted.</exception>
+		/// <exception cref="ArgumentNullException">Thrown if array is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if array not sorted.</exception>
 		/// <returns>Enumeration of ranges representing the intersections.</returns>
 		public IEnumerable<DateTimeRange> Intersections()
 		{
