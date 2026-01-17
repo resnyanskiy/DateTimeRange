@@ -144,6 +144,7 @@ Big O
 | Space | `O(1)`               | `O(n)`          | `O(n)`       | `O(n)`⁽²⁾             |
 
 ⁽¹⁾Time complexity is `O(n)` if the input is already sorted.
+
 ⁽²⁾Space complexity is `O(1)` if the input is a sorted array.
 
 Docs
