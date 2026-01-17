@@ -5,6 +5,8 @@ namespace DateTimeRangeLibrary;
 
 public class ComparersTests
 {
+	private static DateTimeRange[] Ranges(params (int start, int end)[] ranges) => ranges.ToRanges().ToArray();
+	
 	private readonly Fixture _fixture = new();
 	private readonly DefaultComparer _comparer = new();
 
@@ -27,21 +29,18 @@ public class ComparersTests
 	public void DefaultComparer_GoldenSample()
 	{
 		// Arrange
-		var begin = DateTime.Today;
-		DateTimeRange[] expected =
-		[
-			new(begin, TimeSpan.FromMinutes(5)),
-			new(begin, TimeSpan.FromMinutes(7)),
-			new(begin.AddMinutes(1), TimeSpan.FromMinutes(11)),
-			new(begin.AddMinutes(2), TimeSpan.FromMinutes(7)),
-			new(begin.AddMinutes(4), TimeSpan.FromMinutes(5)),
-			new(begin.AddMinutes(7), TimeSpan.FromMinutes(5)),
-		];
+		DateTimeRange[] expected = Ranges(
+			(0, 5),
+			(0, 7),
+			(1, 12),
+			(2, 9),
+			(4, 9),
+			(7, 12));
 		
 		// Act
 		var r = new Random();
 		var random = expected.OrderBy(_ => r.Next(expected.Length));
-		var actual = new SortedSet<DateTimeRange>(random, _comparer);
+		var actual = new SortedSet<DateTimeRange>(random, new DefaultComparer());
 
 		// Assert
 		Assert.Equal(expected.Length, actual.Count);
@@ -62,16 +61,13 @@ public class ComparersTests
 	public void AlternateComparer_GoldenSample()	
 	{
 		// Arrange
-		var begin = DateTime.Today;
-		DateTimeRange[] expected =
-		[
-			new(begin, TimeSpan.FromMinutes(5)),
-			new(begin, TimeSpan.FromMinutes(7)),
-			new(begin.AddMinutes(2), TimeSpan.FromMinutes(7)),
-			new(begin.AddMinutes(4), TimeSpan.FromMinutes(5)),
-			new(begin.AddMinutes(1), TimeSpan.FromMinutes(11)),
-			new(begin.AddMinutes(7), TimeSpan.FromMinutes(5)),
-		];
+		DateTimeRange[] expected = Ranges(
+			(0, 5),
+			(0, 7),
+			(2, 9),
+			(4, 9),
+			(1, 12),
+			(7, 12));
 		
 		// Act
 		var r = new Random();

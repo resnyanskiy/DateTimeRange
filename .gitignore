@@ -45,7 +45,7 @@
 #[Ll]ogs/
 
 # Benchmarks
-#BenchmarkDotNet.Artifacts/
+BenchmarkDotNet.Artifacts/
 
 # Visual Studio code coverage results
 #*.coverage

@@ -79,17 +79,14 @@ public record struct DateTimeRange
 	}
 
 	/// <summary>
-	/// Initializes a new instance of DateTimeRange.
+	/// Deconstruct the range.
 	/// </summary>
 	/// <param name="begin">The beginning of the range.</param>
 	/// <param name="duration">The duration of the range.</param>
-	/// <exception cref="ArgumentOutOfRangeException">
-	/// Thrown if <c>begin+duration</c> is outside the
-	/// <see cref="DateTime.MinValue">MinValue</see>..<see cref="DateTime.MaxValue">MaxValue</see> range.
-	/// </exception>
-	public DateTimeRange(DateTime begin, TimeSpan duration) : this(begin, begin + duration)
+	public void Deconstruct(out DateTime begin, out TimeSpan duration)
 	{
-		//
+		begin = Begin;
+		duration = End - Begin;
 	}
 
 	/// <summary>

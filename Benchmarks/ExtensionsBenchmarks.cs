@@ -7,8 +7,10 @@ namespace Benchmarks;
 public class ExtensionsBenchmarks
 {
 	private DateTimeRange[] _ranges;
-	private DateTimeRange[] _sorted;
+	private IEnumerable<DateTimeRange> Ranges => _ranges;
 	
+	private DateTimeRange[] _sorted;
+
 	[Params(10, 100, 1000, 10000)]
 	public int N;
 
@@ -29,7 +31,7 @@ public class ExtensionsBenchmarks
 		{
 			var begin = baseDate.AddDays(random.NextDouble() * 365);
 			var duration = TimeSpan.FromDays(365 * (0.1 + 0.9 * random.NextDouble()));
-			_ranges[i] = new DateTimeRange(begin, duration);
+			_ranges[i] = new DateTimeRange(begin, begin + duration);
 			
 			/*
 			// Use OverlapRatio to manage overlapping
@@ -50,19 +52,19 @@ public class ExtensionsBenchmarks
 	}
 	
 	[BenchmarkCategory(nameof(Merge)), Benchmark(Baseline =  true)]
-	public int Merge() => _ranges.Merge().Count();
+	public int Merge() => Ranges.Merge().Count();
 	
 	[BenchmarkCategory(nameof(Merge)), Benchmark]
 	public int MergeSorted() => _sorted.Merge().Count();
 
 	[BenchmarkCategory(nameof(Slice)), Benchmark(Baseline =  true)]
-	public int Slice() => _ranges.Slice().Count();
+	public int Slice() => Ranges.Slice().Count();
 	
 	[BenchmarkCategory(nameof(Slice)), Benchmark]
 	public int SliceSorted() => _sorted.Slice().Count();
 
 	[BenchmarkCategory(nameof(Intersections)), Benchmark(Baseline =  true)]
-	public int Intersections() => _ranges.Intersections().Count();	
+	public int Intersections() => Ranges.Intersections().Count();	
 
 	[BenchmarkCategory(nameof(Intersections)), Benchmark]
 	public int IntersectionsSorted() => _sorted.Intersections().Count();	

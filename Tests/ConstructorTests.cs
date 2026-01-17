@@ -32,22 +32,6 @@ public class ConstructorTests
 			Add(new DateTime(2020, 1, 1), new DateTime(2020, 1, 2));
 		}
 	}
-
-	[Theory, ClassData(typeof(EdgeCasesData))]
-	public void Constructor_WithEdgeCases_ThrowsException(DateTime begin, TimeSpan duration)
-	{
-		// Act & Assert
-		Assert.Throws<ArgumentOutOfRangeException>(() => new DateTimeRange(begin, duration));
-	}
-
-	private class EdgeCasesData : TheoryData<DateTime, TimeSpan>
-	{
-		public EdgeCasesData()
-		{
-			Add(new DateTime(1), TimeSpan.MaxValue);
-			Add(new DateTime(1), new TimeSpan(-2));
-		}
-	}
 	
 	[Fact]
 	public void DefaultConstructor_CreatesMinValue()

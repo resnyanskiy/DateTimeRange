@@ -8,8 +8,9 @@ public class EqualityTests
 
 	static EqualityTests()
 	{
-		Range = new DateTimeRange(DateTime.Now, TimeSpan.FromHours(-1));
-		Other = new DateTimeRange(Range.Begin, TimeSpan.FromMinutes(1));
+		var today = DateTime.Today;
+		Range = new DateTimeRange(today, today + TimeSpan.FromHours(-1));
+		Other = new DateTimeRange(Range.Begin, Range.Begin + TimeSpan.FromMinutes(1));
 		Equal = new DateTimeRange(Range.End, Range.Begin);
 	}
 

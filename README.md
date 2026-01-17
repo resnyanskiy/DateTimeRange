@@ -1,6 +1,6 @@
 Overview
 -
-The library contains one simple type `DateTimeRange`, which represents an _inclusive_ interval between two points on the timeline. It has some basic features like comparison, validation, etc.
+The library contains one simple type `DateTimeRange`, which represents an _inclusive_ interval between two points on the timeline. It has some basic features like comparison, validation, deconstructing, etc.
 ```csharp
 record struct DateTimeRange
 {
@@ -138,12 +138,13 @@ IEnumerable<DateTimeRange> Intersections(this IEnumerable<DateTimeRange> ranges)
 
 Big O
 -
-|       | DateTimeRange.Create | Merge         | Slice      | Intersections     |
-|------:|----------------------|---------------|------------|-------------------|
-|  Time | O(n)                 | O(n log n)⁽¹⁾ | O(n log n) | O(n log n)..O(n²) |
-| Space | O(1)                 | O(n)          | O(n)       | O(n)              |
+|       | DateTimeRange.Create | Merge           | Slice        | Intersections         |
+|------:|----------------------|-----------------|--------------|-----------------------|
+|  Time | `O(n)`               | `O(n log n)`⁽¹⁾ | `O(n log n)` | `O(n log n)`..`O(n²)` |
+| Space | `O(1)`               | `O(n)`          | `O(n)`       | `O(n)`⁽²⁾             |
 
 ⁽¹⁾Time complexity is `O(n)` if the input is already sorted.
+⁽²⁾Space complexity is `O(1)` if the input is a sorted array.
 
 Docs
 -

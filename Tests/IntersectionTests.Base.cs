@@ -2,6 +2,8 @@ namespace DateTimeRangeLibrary;
 
 public partial class IntersectionTests
 {
+	private static IEnumerable<DateTimeRange> Ranges(params (int start, int end)[] ranges) => ranges.ToRanges();
+	
 	/*
 	01234567
 	/----/
@@ -13,24 +15,37 @@ public partial class IntersectionTests
 	[Fact]
 	public void BaseSample()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(1), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(2), TimeSpan.FromMinutes(5)),
-		};
+		var ranges = Ranges((0, 5), (1, 6), (2, 7));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Single(intersections);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(2), begin.AddMinutes(5)), intersections[0]);
+		Assert.Equal((2, 5).Range(), intersections[0]);
 	}
 
+	/*
+	01234567
+	 /----/
+	/----/
+	  /----/
+	01234567
+	*/
+	[Fact]
+	public void InputArray_MustBe_Sorted()
+	{
+		// Arrange
+		DateTimeRange[] ranges = Ranges((1, 6), (0, 5), (2, 7)).ToArray();
+
+		// Act
+		var intersections = ranges.Intersections();
+		
+		// Assert
+		Assert.Throws<ArgumentException>(() => intersections.Count());
+	}
+	
 	/*
 	0123456789
 	/-----/
@@ -48,23 +63,15 @@ public partial class IntersectionTests
 	[Fact]
 	public void Intersection_Of_Intersections()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(6)),
-			new DateTimeRange(begin.AddMinutes(1), TimeSpan.FromMinutes(6)),
-			new DateTimeRange(begin.AddMinutes(2), TimeSpan.FromMinutes(6)),
-			new DateTimeRange(begin.AddMinutes(3), TimeSpan.FromMinutes(6)),
-		};
+		var ranges = Ranges((0, 6), (1, 7), (2, 8), (3, 9));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Single(intersections);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(3), begin.AddMinutes(6)), intersections[0]);
+		Assert.Equal((3, 6).Range(), intersections[0]);
 	}
 
 	/*
@@ -76,10 +83,8 @@ public partial class IntersectionTests
 	[Fact]
 	public void If_SameRanges_Then_SingleIntersection()
 	{
-		var begin = DateTime.Today;
-		var range = new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5));
-
 		// Arrange
+		var range = (0, 5).Range();
 		var ranges = new[] { range, range, range };
 
 		// Act
@@ -87,7 +92,7 @@ public partial class IntersectionTests
 
 		// Assert
 		Assert.Single(intersections);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(0), begin.AddMinutes(5)), intersections[0]);
+		Assert.Equal((0, 5).Range(), intersections[0]);
 	}
 
 	/*
@@ -101,22 +106,15 @@ public partial class IntersectionTests
 	[Fact]
 	public void Intersection_For_SameBegin()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(9)),
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(7)),
-		};
+		var ranges = Ranges((0, 5), (0, 9), (0, 7));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Single(intersections);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(0), begin.AddMinutes(5)), intersections[0]);
+		Assert.Equal((0, 5).Range(), intersections[0]);
 	}
 
 	/*
@@ -130,22 +128,15 @@ public partial class IntersectionTests
 	[Fact]
 	public void Intersection_For_SameEnd()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(9), TimeSpan.FromMinutes(-5)),
-			new DateTimeRange(begin.AddMinutes(9), TimeSpan.FromMinutes(-9)),
-			new DateTimeRange(begin.AddMinutes(9), TimeSpan.FromMinutes(-7)),
-		};
+		var ranges = Ranges((4, 9), (0, 9), (2, 9));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Single(intersections);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(4), begin.AddMinutes(9)), intersections[0]);
+		Assert.Equal((4, 9).Range(), intersections[0]);
 	}
 
 	/*
@@ -158,24 +149,16 @@ public partial class IntersectionTests
 	[Fact]
 	public void Two_Intersections()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(6), TimeSpan.FromMinutes(5)),
-			//
-			new DateTimeRange(begin.AddMinutes(3), TimeSpan.FromMinutes(5)),
-		};
+		var ranges = Ranges((0, 5), (6, 11), (3, 8));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Equal(2, intersections.Length);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(3), begin.AddMinutes(5)), intersections[0]);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(6), begin.AddMinutes(8)), intersections[1]);
+		Assert.Equal((3, 5).Range(), intersections[0]);
+		Assert.Equal((6, 8).Range(), intersections[1]);
 	}
 	
 	/*
@@ -188,24 +171,17 @@ public partial class IntersectionTests
 	[Fact]
 	public void BeginAndEnd_Are_PartsOfTheRange()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(10), TimeSpan.FromMinutes(5)),
-			//
-			new DateTimeRange(begin.AddMinutes(5), TimeSpan.FromMinutes(5)),
-		};
+		var begin = DateTime.Today;
+		var ranges = Ranges((0, 5), (10, 15), (5, 10));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Equal(2, intersections.Length);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(5), TimeSpan.Zero), intersections[0]);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(10), TimeSpan.Zero), intersections[1]);
+		Assert.Equal((5, 5).Range(), intersections[0]);
+		Assert.Equal((10, 10).Range(), intersections[1]);
 	}
 
 	/*
@@ -217,16 +193,8 @@ public partial class IntersectionTests
 	[Fact]
 	public void NoIntersection()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(12), TimeSpan.FromMinutes(5)),
-			//
-			new DateTimeRange(begin.AddMinutes(6), TimeSpan.FromMinutes(5)),
-		};
+		var ranges = Ranges((0, 5), (12, 17), (6, 11));
 
 		// Act
 		var intersections = ranges.Intersections();
@@ -245,25 +213,16 @@ public partial class IntersectionTests
 	[Fact]
 	public void Distinct_Intersections()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(7), TimeSpan.FromMinutes(5)),
-			//
-			new DateTimeRange(begin.AddMinutes(1), TimeSpan.FromMinutes(5)),
-			new DateTimeRange(begin.AddMinutes(8), TimeSpan.FromMinutes(5)),
-		};
+		var ranges = Ranges((0, 5), (7, 12), (1, 6), (8, 12));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Equal(2, intersections.Length);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(1), TimeSpan.FromMinutes(4)), intersections[0]);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(8), TimeSpan.FromMinutes(4)), intersections[1]);
+		Assert.Equal((1, 5).Range(), intersections[0]);
+		Assert.Equal((8, 12).Range(), intersections[1]);
 	}
 
 	/*
@@ -276,24 +235,16 @@ public partial class IntersectionTests
 	[Fact]
 	public void Overlapped_Range()
 	{
-		var begin = DateTime.Today;
-
 		// Arrange
-		var ranges = new[]
-		{
-			new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(9)),
-			//
-			new DateTimeRange(begin.AddMinutes(1), TimeSpan.FromMinutes(3)),
-			new DateTimeRange(begin.AddMinutes(5), TimeSpan.FromMinutes(3)),
-		};
+		var ranges = Ranges((0, 9), (1, 4), (5, 8));
 
 		// Act
 		var intersections = ranges.Intersections().ToArray();
 
 		// Assert
 		Assert.Equal(2, intersections.Length);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(1), begin.AddMinutes(4)), intersections[0]);
-		Assert.Equal(new DateTimeRange(begin.AddMinutes(5), begin.AddMinutes(8)), intersections[1]);
+		Assert.Equal((1, 4).Range(), intersections[0]);
+		Assert.Equal((5, 8).Range(), intersections[1]);
 	}
 
 	/*
@@ -303,17 +254,18 @@ public partial class IntersectionTests
 	[Fact]
 	public void NoCalculation_If_SingleRange()
 	{
-		var begin = DateTime.Today;
-		var range = new DateTimeRange(begin.AddMinutes(0), TimeSpan.FromMinutes(5));
-
 		// Arrange
-		var ranges = new[] { range };
+		IEnumerable<DateTimeRange> ranges = Ranges((0, 5));
+		DateTimeRange[] rangesArray = [(0, 5).Range()];
 
 		// Act
 		var intersections = ranges.Intersections();
+		var intersectionsOfArray = rangesArray.Intersections();
 
 		// Assert
 		Assert.Same(ranges, intersections);
+		Assert.NotSame(rangesArray, intersectionsOfArray);
+		Assert.Empty(intersectionsOfArray);
 	}
 
 	[Fact]
