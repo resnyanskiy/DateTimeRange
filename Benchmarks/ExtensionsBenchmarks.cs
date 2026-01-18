@@ -7,9 +7,10 @@ namespace Benchmarks;
 public class ExtensionsBenchmarks
 {
 	private DateTimeRange[] _ranges;
-	private IEnumerable<DateTimeRange> Ranges => _ranges;
-	
 	private DateTimeRange[] _sorted;
+	private DateTimeRange _random;
+	
+	private IEnumerable<DateTimeRange> Ranges => _ranges;
 
 	[Params(10, 100, 1000, 10000)]
 	public int N;
@@ -49,6 +50,8 @@ public class ExtensionsBenchmarks
 
 		_sorted = _ranges.ToArray();
 		_sorted.Sort(new DefaultComparer());
+		
+		_random = _ranges[random.Next(N)];
 	}
 	
 	[BenchmarkCategory(nameof(Merge)), Benchmark(Baseline =  true)]
@@ -68,4 +71,7 @@ public class ExtensionsBenchmarks
 
 	[BenchmarkCategory(nameof(Intersections)), Benchmark]
 	public int IntersectionsSorted() => _sorted.Intersections().Count();	
+
+	[BenchmarkCategory(nameof(Intersections)), Benchmark]
+	public int IntersectionsWithRange() => Ranges.Intersections(_random).Count();	
 }

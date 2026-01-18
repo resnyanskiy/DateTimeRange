@@ -9,7 +9,7 @@ public static class Extensions
 	extension(IEnumerable<DateTimeRange> ranges)
 	{
 		/// <summary>
-		/// Finds all intersections between ranges.
+		/// Returns all intersections between ranges.
 		/// </summary>
 		/// <remarks>
 		/// Returns provided enumeration if it has less than 2 elements.
@@ -29,6 +29,17 @@ public static class Extensions
 			rangesArray.Sort(new DefaultComparer());
 		
 			return Intersections(rangesArray);
+		}
+
+		/// <summary>
+		/// Returns all intersections between ranges and provided range.
+		/// </summary>
+		/// <param name="range">The range to check for intersections.</param>
+		/// <returns>Enumeration of ranges representing the intersections.</returns>
+		public IEnumerable<DateTimeRange> Intersections(DateTimeRange range)
+		{
+			var intervalTree = new IntervalTree(ranges);
+			return intervalTree.SearchIntersections(range).Intersections();
 		}
 		
 		/// <summary>

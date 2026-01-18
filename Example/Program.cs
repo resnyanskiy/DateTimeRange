@@ -66,66 +66,78 @@ async Task GenerateSignals(CancellationToken ct)
 await Task.WhenAll(sensors);
 await saver;
 
-// Processor: Create report (gantt diagram)
+// Processor: Create report
+var ranges = new List<(Guid SensorId, DateTimeRange Range)>();
+var all = new Queue<DateTimeRange>();
+
+// get ranges from signals
+foreach (var sensor in storage.ToLookup(x => x.SensorId))
+{
+	var signals = sensor.ToDictionary(s => s.Timestamp, s => s.Value); // get ranges and sort them
+	var query = DateTimeRange.Create(signals, 5).Where(r => r.End < DateTime.MaxValue);
+	var set = new SortedSet<DateTimeRange>(query, new DefaultComparer());
+	
+	if (set.Count > 0)
+	{
+		foreach (var range in set)
+		{
+			ranges.Add((sensor.Key, range));
+			all.Enqueue(range); // save for analysis as single set of ranges
+		}
+	}
+}
+
+// analysis
+var intervalTree = new IntervalTree(all);
+var merges = all.Merge();
+var slices = all.Slice();
+var intersections = all.Intersections().OrderBy(x => x.End - x.Begin).ToArray();
+// ranges intersecting max intersection
+var intersectingRanges = intervalTree.SearchIntersections(intersections.Last()).ToHashSet();
+
 var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Report.md");
 using (var writer = new StreamWriter(reportPath))
 {
+	// Ranges
 	writer.WriteLine("```mermaid");
-	WriteReportHeader();
-	
-	var ranges = new Queue<DateTimeRange>();
-	
-	// ranges
-	foreach (var sensor in storage.ToLookup(x => x.SensorId))
+	WriteGanttHeader();
+
+	// ranges sections
+	foreach (var sensor in ranges.ToLookup(x => x.SensorId, x => x.Range))
 	{
-		// Get ranges and sort them
-		var signals = sensor.ToDictionary(s => s.Timestamp, s => s.Value);
-		var query = DateTimeRange.Create(signals, 5).Where(r => r.End < DateTime.MaxValue);
-		var set = new SortedSet<DateTimeRange>(query, new DefaultComparer());
-		
-		// Write diagram
-		if (set.Count > 0)
+		writer.WriteLine('\t' + $"section {sensor.Key.ToShortString()}");
+		var rangeInSection = 1;
+		foreach (var range in sensor)
 		{
-			writer.WriteLine('\t' + $"section {sensor.Key.ToShortString()}");
-			var rangeInSection = 1;
-			foreach (var range in set)
-			{
-				WriteGanttTask(range, $"{rangeInSection++}");
-				
-				// Save for analysis
-				ranges.Enqueue(range);
-			}
-		}
+			WriteGanttTask(range, $"{rangeInSection++}", intersectingRanges.Contains(range) ? "crit, active" : "active");
+		}		
 	}
 	
-	// merge
+	// merge section
 	writer.WriteLine('\t' + "section ∑ Int");
-	var merges = ranges.Merge();
 	foreach (var range in merges.Select((range, index) => (Data: range, Index: index + 1)))
 	{
-		WriteGanttTask(range.Data, $"{range.Index}", "active");
+		WriteGanttTask(range.Data, $"{range.Index}");
 	}
 	
-	// slice
+	// slices section
 	writer.WriteLine('\t' + "section δ Dif");
-	var slices = ranges.Slice();
 	foreach (var range in slices.Select((range, index) => (Data: range, Index: index + 1)))
 	{
 		WriteGanttTask(range.Data, $"{range.Index}", "done");
 	}
 	
-	// intersections
+	// intersections section
 	writer.WriteLine('\t' + "section x̂ Max");
-	var intersections = ranges.Intersections();
 	foreach (var range in intersections)
 	{
 		WriteVerticalLines(range);
-		WriteGanttTask(range, "I", "crit, active");
+		WriteGanttTask(range, "I", "crit, done");
 	}
 	
 	writer.WriteLine("```");
 
-	void WriteReportHeader()
+	void WriteGanttHeader()
 	{
 		writer.WriteLine("---");
 		writer.WriteLine("displayMode: compact");
@@ -165,6 +177,16 @@ using (var writer = new StreamWriter(reportPath))
 		writer.WriteLine("\t\t" + $"- :vert, {begin}, 0s");
 		writer.WriteLine("\t\t" + $"- :vert, {end}, 0s");
 	}
+
+	writer.WriteLine();
+	
+	// Interval tree
+	writer.WriteLine("```mermaid");
+	writer.WriteLine("---");
+	writer.WriteLine("title: Interval tree");
+	writer.WriteLine("---");
+	writer.WriteMermaidGraph(intervalTree);	
+	writer.WriteLine("```");
 }
 
 Console.SetCursorPosition(0, NUMBER_OF_SENSORS + 3);
