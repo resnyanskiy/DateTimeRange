@@ -2,7 +2,7 @@ namespace DateTimeRangeLibrary;
 
 public class IntervalTreeTests
 {
-	private static IEnumerable<DateTimeRange> Ranges(params (int start, int end)[] ranges) => ranges.ToRanges();
+	private static IEnumerable<DateTimeRange> Ranges(params (int start, int end)[] ranges) => ranges.Ranges();
 
 	[Fact]
 	public void SearchIntersections_EmptyTree_EmptyIntersection()

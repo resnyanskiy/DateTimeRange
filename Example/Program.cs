@@ -88,95 +88,77 @@ foreach (var sensor in storage.ToLookup(x => x.SensorId))
 }
 
 // analysis
-var intervalTree = new IntervalTree(all);
 var merges = all.Merge();
 var slices = all.Slice();
 var intersections = all.Intersections().OrderBy(x => x.End - x.Begin).ToArray();
-// ranges intersecting max intersection
-var intersectingRanges = intervalTree.SearchIntersections(intersections.Last()).ToHashSet();
 
+var intervalTree = new IntervalTree(all);
+var intersectingRanges = intervalTree.SearchIntersections(intersections.Last()).ToHashSet(); // ranges intersecting max intersection
+
+// create report
 var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Report.md");
 using (var writer = new StreamWriter(reportPath))
 {
 	// Ranges
 	writer.WriteLine("```mermaid");
-	WriteGanttHeader();
+	
+	#region Mermaid Gantt Header
+
+	writer.WriteLine("---");
+	writer.WriteLine("displayMode: compact");
+	writer.WriteLine("config:");
+	writer.WriteLine(" themeCSS:");
+	writer.WriteLine(Theme1());
+	writer.WriteLine(" gantt:");
+	writer.WriteLine("  numberSectionStyles: 1");
+	writer.WriteLine("---");
+	
+	writer.WriteLine("gantt");
+	writer.WriteLine('\t' + "title Sensors");
+	writer.WriteLine('\t' + "dateFormat mm:ss.SSS");
+	writer.WriteLine('\t' + "axisFormat %S:%L");
+
+	string Theme1() => 
+		"""
+		   "\n
+		   rect[id^=vert] { height: calc(100% - 50px) ; transform: translate(0px, 30px); y: 0; width: 1px; stroke: none; fill: red; }\n
+		   text[id^=vert] { display: none }"
+		""";
+	
+	#endregion
 
 	// ranges sections
+	var rangeTitle = new Dictionary<DateTimeRange, string>(all.Count); //TODO could be same range from different sensors
 	foreach (var sensor in ranges.ToLookup(x => x.SensorId, x => x.Range))
 	{
 		writer.WriteLine('\t' + $"section {sensor.Key.ToShortString()}");
 		var rangeInSection = 1;
 		foreach (var range in sensor)
 		{
-			WriteGanttTask(range, $"{rangeInSection++}", intersectingRanges.Contains(range) ? "crit, active" : "active");
+			rangeTitle[range] = $"{sensor.Key.ToShortString()} {rangeInSection}"; 
+			writer.WriteMermaidGanttTask(range, $"{rangeInSection++}", intersectingRanges.Contains(range) ? "crit, active" : "active");
 		}		
 	}
 	
 	// merge section
-	writer.WriteLine('\t' + "section ∑ Int");
-	foreach (var range in merges.Select((range, index) => (Data: range, Index: index + 1)))
-	{
-		WriteGanttTask(range.Data, $"{range.Index}");
-	}
+	writer.WriteMermaidGanttSection(merges, "∑ Int");
 	
 	// slices section
-	writer.WriteLine('\t' + "section δ Dif");
-	foreach (var range in slices.Select((range, index) => (Data: range, Index: index + 1)))
-	{
-		WriteGanttTask(range.Data, $"{range.Index}", "done");
-	}
+	writer.WriteMermaidGanttSection(slices, "δ Dif", "done");
 	
 	// intersections section
 	writer.WriteLine('\t' + "section x̂ Max");
 	foreach (var range in intersections)
-	{
-		WriteVerticalLines(range);
-		WriteGanttTask(range, "I", "crit, done");
-	}
-	
-	writer.WriteLine("```");
-
-	void WriteGanttHeader()
-	{
-		writer.WriteLine("---");
-		writer.WriteLine("displayMode: compact");
-		writer.WriteLine("config:");
-		writer.WriteLine(" themeCSS:");
-		writer.WriteLine(Theme());
-		writer.WriteLine(" gantt:");
-		writer.WriteLine("  numberSectionStyles: 1");
-		writer.WriteLine("---");
-	
-		writer.WriteLine("gantt");
-		writer.WriteLine('\t' + "title Sensors");
-		writer.WriteLine('\t' + "dateFormat mm:ss.SSS");
-		writer.WriteLine('\t' + "axisFormat %S:%L");
-		
-		string Theme() => 
-			"""
-		      "\n
-		      rect[id^=vert] { height: calc(100% - 50px) ; transform: translate(0px, 30px); y: 0; width: 1px; stroke: none; fill: red; }\n
-		      text[id^=vert] { display: none }"
-		   """;
-	}
-	
-	void WriteGanttTask(DateTimeRange range, string name, string? type = null)
-	{
-		var begin = range.Begin.ToString("mm:ss.fff");
-		var end = range.End.ToString("mm:ss.fff");
-		
-		writer.WriteLine("\t\t" + $"{name} :{type ?? string.Empty}, {begin}, {end}");
-	}
-	
-	void WriteVerticalLines(DateTimeRange range)
 	{
 		var begin = range.Begin.ToString("mm:ss.fff");
 		var end = range.End.ToString("mm:ss.fff");
 
 		writer.WriteLine("\t\t" + $"- :vert, {begin}, 0s");
 		writer.WriteLine("\t\t" + $"- :vert, {end}, 0s");
+		writer.WriteMermaidGanttTask(range, "I", "crit, done");
 	}
+	
+	writer.WriteLine("```");
 
 	writer.WriteLine();
 	
@@ -185,7 +167,7 @@ using (var writer = new StreamWriter(reportPath))
 	writer.WriteLine("---");
 	writer.WriteLine("title: Interval tree");
 	writer.WriteLine("---");
-	writer.WriteMermaidGraph(intervalTree);	
+	writer.WriteMermaidGraph(intervalTree, node => rangeTitle[node.Range]);	
 	writer.WriteLine("```");
 }
 

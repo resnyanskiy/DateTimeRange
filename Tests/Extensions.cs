@@ -8,7 +8,7 @@ internal static class Extensions
 		return new DateTimeRange(today.AddMinutes(range.begin), today.AddMinutes(range.end));
 	}
 	
-	public static IEnumerable<DateTimeRange> ToRanges(this (int begin, int end)[] ranges)
+	public static IEnumerable<DateTimeRange> Ranges(this (int begin, int end)[] ranges)
 	{
 		var today = DateTime.Today;
 		foreach (var range in ranges)

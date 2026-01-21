@@ -2,7 +2,7 @@ namespace DateTimeRangeLibrary;
 
 public partial class IntersectionTests
 {
-	private static IEnumerable<DateTimeRange> Ranges(params (int start, int end)[] ranges) => ranges.ToRanges();
+	private static IEnumerable<DateTimeRange> Ranges(params (int start, int end)[] ranges) => ranges.Ranges();
 	
 	/*
 	01234567
@@ -172,7 +172,6 @@ public partial class IntersectionTests
 	public void BeginAndEnd_Are_PartsOfTheRange()
 	{
 		// Arrange
-		var begin = DateTime.Today;
 		var ranges = Ranges((0, 5), (10, 15), (5, 10));
 
 		// Act
@@ -256,28 +255,52 @@ public partial class IntersectionTests
 	{
 		// Arrange
 		IEnumerable<DateTimeRange> ranges = Ranges((0, 5));
-		DateTimeRange[] rangesArray = [(0, 5).Range()];
-
+		
 		// Act
 		var intersections = ranges.Intersections();
-		var intersectionsOfArray = rangesArray.Intersections();
 
 		// Assert
 		Assert.Same(ranges, intersections);
+	}
+	
+	[Fact]
+	public void NoCalculation_If_SingleRangeArray()
+	{
+		// Arrange
+		DateTimeRange[] rangesArray = [(0, 5).Range()];
+
+		// Act
+		var intersectionsOfArray = rangesArray.Intersections();
+
+		// Assert
 		Assert.NotSame(rangesArray, intersectionsOfArray);
 		Assert.Empty(intersectionsOfArray);
-	}
+	}	
 
 	[Fact]
 	public void NoCalculation_If_EmptyInput()
 	{
 		// Arrange
-		var ranges = Enumerable.Empty<DateTimeRange>();
+		IEnumerable<DateTimeRange> ranges = Enumerable.Empty<DateTimeRange>();
 
 		// Act
 		var intersections = ranges.Intersections();
 
 		// Assert
 		Assert.Same(ranges, intersections);
+	}
+
+	[Fact]
+	public void NoCalculation_If_EmptyInputArray()
+	{
+		// Arrange
+		DateTimeRange[] rangesArray = Array.Empty<DateTimeRange>();
+
+		// Act
+		var intersectionsOfArray = rangesArray.Intersections();
+
+		// Assert
+		Assert.NotSame(rangesArray, intersectionsOfArray);
+		Assert.Empty(intersectionsOfArray);
 	}
 }

@@ -9,7 +9,26 @@ internal static class Extensions
 
 	extension(StreamWriter writer)
 	{
-		public void WriteMermaidGraph(IntervalTree tree)
+		public void WriteMermaidGanttTask(DateTimeRange range, string name, string? type = null)
+		{
+			var begin = range.Begin.ToString("mm:ss.fff");
+			var end = range.End.ToString("mm:ss.fff");
+		
+			writer.WriteLine("\t\t" + $"{name} :{type ?? string.Empty}, {begin}, {end}");
+		}
+		
+		public void WriteMermaidGanttSection(
+			IEnumerable<DateTimeRange> ranges, string sectionName,
+			string? taskType = null, string? taskName = null)
+		{
+			writer.WriteLine('\t' + $"section {sectionName}");
+			foreach (var range in ranges.Select((range, index) => (Data: range, Index: index + 1)))
+			{
+				writer.WriteMermaidGanttTask(range.Data, taskName ?? $"{range.Index}", taskType);
+			}
+		}
+		
+		public void WriteMermaidGraph(IntervalTree tree, Func<IntervalTree.Node, string> getNodeTitle)
 		{
 			if (tree.Root == null)
 				return;
@@ -24,10 +43,7 @@ internal static class Extensions
 			{
 				var (node, id) = queue.Dequeue();
              
-				var begin = node.Range.Begin.ToString("ss.fff");
-				var end = node.Range.End.ToString("ss.fff");
-		
-				writer.WriteLine('\t' + $"N{id}[\"{begin} - {end}<br/>{node.Height}\"]");
+				writer.WriteLine('\t' + $"N{id}[\"{getNodeTitle(node)}\"]");
 				
 				if (node.Left != null)
 				{

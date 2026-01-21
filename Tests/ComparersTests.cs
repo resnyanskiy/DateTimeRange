@@ -5,7 +5,7 @@ namespace DateTimeRangeLibrary;
 
 public class ComparersTests
 {
-	private static DateTimeRange[] Ranges(params (int start, int end)[] ranges) => ranges.ToRanges().ToArray();
+	private static DateTimeRange[] Ranges(params (int start, int end)[] ranges) => ranges.Ranges().ToArray();
 	
 	private readonly Fixture _fixture = new();
 	private readonly DefaultComparer _comparer = new();
